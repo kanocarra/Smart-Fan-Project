@@ -64,6 +64,11 @@
 
     <!-- AngularFire -->
     <script src="https://cdn.firebase.com/libs/angularfire/2.0.1/angularfire.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="../node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="../node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
     <script src="app.js"></script>
   </head>
   <body ng-app="app">
@@ -71,6 +76,10 @@
       <pre>
 {{ctrl.object | json}}
       </pre>
+      <canvas id="line" class="chart chart-line" chart-data="data"
+              chart-labels="labels" chart-series="series" chart-options="options"
+              chart-dataset-override="datasetOverride" chart-click="onClick">
+      </canvas>
 
     </div>
   </body>

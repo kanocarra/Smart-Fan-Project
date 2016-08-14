@@ -6,8 +6,7 @@ Hosted at https://smart-fan-project.firebaseapp.com/
 
 #To install
     npm install -g firebase-tools
-    npm install angular --save
-    npm install angularfire --save
+    npm install
     
 #To run locally:
     firebase serve
