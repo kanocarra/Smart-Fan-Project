@@ -2,59 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Welcome to Firebase Hosting</title>
-    <style media="screen">
+    <title>Fan Base</title>
+    <style>
       body {
         font-family: Roboto, Arial, sans-serif;
-        background: #ECEFF1;
-        color: rgba(0,0,0,0.87);
+        background: #d9e0e7;
       }
 
       a {
         color: rgb(3,155,229);
       }
 
-      #message {
-        max-width: 400px;
-        margin: 40px auto;
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
-        border-radius: 2px;
-        background: white;
-        padding: 16px 24px;
-      }
 
-      #message h1 {
-        font-size: 22px;
-        font-weight: 500;
-        text-align: center;
-        margin: 0 0 16px;
-      }
-
-      #message p {
-        font-weight: 300;
-        line-height: 150%;
-      }
-
-      #message ul {
-        list-style: none;
-        margin: 16px 0 0;
-        padding: 0;
-        text-align: center;
-      }
-
-      #message li a {
+      #canvasContainer{
+        width: 100%;
+        height: 30%;
         display: inline-block;
-        padding: 8px;
-        text-transform: uppercase;
-        text-decoration: none;
-        font-weight: 500;
-        background: rgb(3,155,229);
-        color: white;
-        border: 1px solid rgb(3,155,229);
-        border-radius: 3px;
-        font-size: 14px;
-        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+        margin-bottom: 25px;
       }
+
+      #speedCanvas {
+        z-index:  -1;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+
+      #powerCanvas {
+        z-index:  -1;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      #temperatureCanvas {
+        z-index:  -1;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
     </style>
     <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
@@ -66,21 +51,71 @@
     <script src="https://cdn.firebase.com/libs/angularfire/2.0.1/angularfire.min.js"></script>
 
     <!-- Chart.js -->
-    <script src="../node_modules/chart.js/dist/Chart.min.js"></script>
-    <script src="../node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
 
+    <!-- Bootstrap -->
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <!-- Source code -->
     <script src="app.js"></script>
   </head>
-  <body ng-app="app">
-    <div id="message" ng-controller="Controller as ctrl">
-      <pre>
-{{ctrl.object | json}}
-      </pre>
-      <canvas id="line" class="chart chart-line" chart-data="data"
-              chart-labels="labels" chart-series="series" chart-options="options"
-              chart-dataset-override="datasetOverride" chart-click="onClick">
-      </canvas>
-
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Fisher & Paykel Appliances | Smart Fan</a>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class = "row">
+      <div class = "col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Speed (RPM)
+          </div>
+        </div>
+      </div>
+      <div class = "col-md-4">
+        <div class="panel panel-default" style = "margin-left: auto; margin-right: auto">
+          <div class="panel-body">
+            Temperature (Celcius)
+          </div>
+        </div>
+      </div>
+      <div class = "col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Power Usage (W)
+          </div>
+        </div>
+      </div>
     </div>
+      <div class = "row">
+        <div class = "col-md-4" id = "speedCanvas" >
+          <canvas id="speedChart" width="500" height="500" style = "z-index: 1;"></canvas>
+        </div>
+        <div class = "col-md-4" id = "temperatureCanvas">
+          <canvas id="temperatureChart"  width="500" height="500" style = "z-index: 1;"></canvas>
+        </div>
+        <div class = "col-md-4" id = "powerCanvas">
+          <canvas id="powerChart" width="500" height="500" style = "z-index: 1;"></canvas>
+        </div>
+        </div>
   </body>
 </html>

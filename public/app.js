@@ -12,27 +12,148 @@
     };
     firebase.initializeApp(config);
 
-    angular
-        .module('app', ['firebase'])
-        .controller('Controller', function ($firebaseObject) {
-
             const database = firebase.database().ref();
-
-            this.object = $firebaseObject(database);
 
             //Create reference to Smart-Fan status
             const statusRef = database.child('status');
             const dataRef = database.child('data');
 
+            //drawGraph(dataRef.val());
 
             //Syn status changes (eventType, callback)
-            statusRef.on('value', snap =>
-                console.log(snap.val()));
-
+            //statusRef.on('value', snap =>
+            //    console.log(snap.val())
+            //);
             //Sync Data Changes
-            dataRef.on('child_added', snap => {
-                console.log(snap.val());
-            });
-        });
-
+            dataRef.on('value', snap => drawGraphs(snap.val()));
 }());
+
+function drawGraphs(data) {
+
+
+    var speedValues = [];
+    var powerValues = [];
+    var tempValues = [];
+    var dateTime = [];
+
+    for (var value in data) {
+        speedValues.push(data[value]['speed']);
+        powerValues.push(data[value]['power']);
+        tempValues.push(data[value]['temperature']);
+        var date = new Date(parseInt(value));
+        var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        dateTime.push(time);
+    }
+
+    drawSpeedGraph(speedValues, dateTime);
+    drawPowerGraph(powerValues, dateTime);
+    drawTemperatureGraph(tempValues, dateTime);
+}
+
+
+function drawSpeedGraph(speedValues, dateTime){
+
+    var ctx = document.getElementById("speedChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateTime,
+            datasets: [{
+                data: speedValues,
+                backgroundColor: 'rgba(0,172,172,0.3)',
+                borderColor: '#00acac',
+                borderWidth: 5
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                position: top,
+                fontSize: 12,
+                text: 'Speed (RPM)'
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+}
+
+function drawPowerGraph(powerValues,dateTime){
+    var ctx = document.getElementById("powerChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateTime,
+            datasets: [{
+                data: powerValues,
+                backgroundColor: 'rgba(114, 124, 182, 0.3)',
+                borderColor:'#727cb6',
+                borderWidth: 5
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                position: top,
+                fontSize: 12,
+                text: 'Power Usage (W)'
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+
+}
+
+function drawTemperatureGraph(tempValues,dateTime){
+
+    var ctx = document.getElementById("temperatureChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateTime,
+            datasets: [{
+                data: tempValues,
+                backgroundColor: 'rgba(52,143,226,0.3)',
+                borderColor: '#348fe2',
+                borderWidth: 5
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                position: top,
+                fontSize: 12,
+                text: 'Temperature of Fan (Celcius)'
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+
+}
+
