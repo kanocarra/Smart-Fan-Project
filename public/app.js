@@ -89,8 +89,19 @@ function drawSpeedGraph(speedValues, dateTime){
             //},
             legend: {
                 display: false
+            },
+            tooltips: {
+                enabled: true,
+                mode: 'single',
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        return tooltipItems.yLabel + ' RPM';
+                    }
+                }
             }
         }
+
+
     });
 }
 
@@ -98,6 +109,7 @@ function drawPowerGraph(powerValues,dateTime){
     var ctx = document.getElementById("powerChart");
     var myChart = new Chart(ctx, {
         type: 'line',
+        multiTooltipTemplate: '<%%= value %>',
         data: {
             labels: dateTime,
             datasets: [{
@@ -108,6 +120,7 @@ function drawPowerGraph(powerValues,dateTime){
             }]
         },
         options: {
+
             scales: {
                 yAxes: [{
                     ticks: {
@@ -123,6 +136,15 @@ function drawPowerGraph(powerValues,dateTime){
             //},
             legend: {
                 display: false
+            },
+            tooltips: {
+                enabled: true,
+                mode: 'single',
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        return tooltipItems.yLabel + ' W';
+                    }
+                }
             }
         }
     });
@@ -159,6 +181,15 @@ function drawTemperatureGraph(tempValues,dateTime){
             //},
             legend: {
                 display: false
+            },
+            tooltips: {
+                enabled: true,
+                mode: 'single',
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        return tooltipItems.yLabel + '°C';
+                    }
+                }
             }
         }
     });
