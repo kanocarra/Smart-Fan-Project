@@ -6,7 +6,7 @@
     <style>
       body {
         font-family: Roboto, Arial, sans-serif;
-        background: #d9e0e7;
+        background: #ededed !important;
       }
 
       a {
@@ -14,30 +14,52 @@
       }
 
 
-      #canvasContainer{
-        width: 100%;
-        height: 30%;
-        display: inline-block;
-        margin-bottom: 25px;
+      .card.status-card {
+        background-color: #2d353c;
+        border: none;
+        border-radius: 3px;
+        background-image: url("images/status-fan.png");
+        background-repeat: no-repeat;
+        background-position: top right;
       }
 
-      #speedCanvas {
-        z-index:  -1;
-        padding-left: 10px;
-        padding-right: 10px;
+      .card.speed-card {
+        background-color: #00acac;
+        border: none;
+        border-radius: 3px;
+        background-image: url("images/status-speed.png");
+        background-repeat: no-repeat;
+        background-position: top right;
       }
 
-
-      #powerCanvas {
-        z-index:  -1;
-        padding-left: 10px;
-        padding-right: 10px;
+      .card.power-card {
+        background-color: #727cb6;
+        border: none;
+        border-radius: 3px;
+        background-image: url("images/status-power.png");
+        background-repeat: no-repeat;
+        background-position: top right;
       }
 
-      #temperatureCanvas {
-        z-index:  -1;
-        padding-left: 10px;
-        padding-right: 10px;
+      #fan-status {
+        width: 50%;
+        float: left;
+      }
+
+      #fan-details p {
+        line-height: 3px;
+        text-align: left;
+
+      }
+
+      .btn.btn-speed {
+        background-color: #00acac;
+        color: #fff;
+      }
+
+      .btn.btn-speed:hover {
+        background-color: #029c9c;
+        color: #fff;
       }
 
     </style>
@@ -53,69 +75,162 @@
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js"></script>
 
-    <!-- Bootstrap -->
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="assets/css/light-bootstrap-dashboard.css" rel="stylesheet"/>
 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+
+
+
+    <!--     Fonts and icons     -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+    <!--&lt;!&ndash; jQuery library &ndash;&gt;-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
 
     <!-- Source code -->
     <script src="app.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Fisher & Paykel Appliances | Smart Fan</a>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
-    <div class = "row">
-      <div class = "col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            Speed (RPM)
-          </div>
-        </div>
-      </div>
-      <div class = "col-md-4">
-        <div class="panel panel-default" style = "margin-left: auto; margin-right: auto">
-          <div class="panel-body">
-            Temperature (Celcius)
-          </div>
-        </div>
-      </div>
-      <div class = "col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            Power Usage (W)
-          </div>
-        </div>
-      </div>
+
+  <nav class="navbar navbar-dark bg-inverse">
+    <div class="nav navbar-nav">
+      <a class="nav-item nav-link" href="#">Fisher & Paykel Appliances | Fan Base</a>
     </div>
-      <div class = "row">
-        <div class = "col-md-4" id = "speedCanvas" >
-          <canvas id="speedChart" width="500" height="500" style = "z-index: 1;"></canvas>
+  </nav>
+  </nav>
+      <div class="content">
+        <div class="container-fluid">
+          <div class = "row">
+            <div class = "col-md-4" style="margin-top: 5px">
+              <div class="card status-card">
+                <div class="card-block">
+                  <h5 style="color: rgba(255,255,255,.7)">STATUS</h5>
+                  <div id = "fan-status">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class = "col-md-4" style="margin-top: 5px">
+              <div class="card speed-card">
+                <div class="card-block">
+                  <h5 style="color: rgba(255,255,255,.7)">CURRENT SPEED</h5>
+                  <div id = "current-speed">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class = "col-md-4" style="margin-top: 5px">
+              <div class="card power-card">
+                <div class="card-block">
+                  <h5 style="color: rgba(255,255,255,.7)">POWER USAGE</h5>
+                  <div id = 'power-usage'></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style = "margin-top: 20px">
+              <h3>Smart Fan <sup>TM</sup></h3>
+              <h4>Fisher & Paykel Appliances</h4>
+               <hr>
+              <div id = "fan-details"></div>
+              <form class="form-inline">
+                <div class="form-group">
+                  <label class="sr-only" for="exampleSpeed">Request New Speed</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="exampleSpeed" placeholder="New Speed">
+                    <div class="input-group-addon">RPM</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-speed" id = "updateSpeed">Update Speed</button>
+              </form>
+              <br>
+              <button type="button" class="btn btn-info" id = "fanState">Start Fan</button>
+              <button type="button" class="btn btn-info" id = "calibrateFan" >Calibrate</button>
+              <button type="button" class="btn btn-info" id = "requestStatus">Request Status</button>
+              <br>
+            </div>
+
+            <div class="col-md-8">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Speed</h4>
+                  <p class="category">Speed of the Fan in RPM </p>
+                </div>
+                <div class="content">
+                  <div id="chartPreferences"></div>
+                  <canvas id="speedChart" width="90" height="30"></canvas>
+                  <div class="footer">
+                    <hr>
+                    <div class="stats">
+                      <i class="fa fa-clock-o"></i> Updated 1 second ago
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              </div>
+
+          <div class="row">
+            <div class = "col-md-4">
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Power Usage</h4>
+                  <p class="category">Power Consumption of the Fan in Watts</p>
+                </div>
+                <div class="content">
+                  <div id="chartHours"></div>
+                  <canvas id="powerChart" width="90" height="90"></canvas>
+                  <div class="footer">
+                    <hr>
+                    <div class="stats">
+                      <i class="fa fa-history"></i> Updated 1 second ago
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class = "col-md-4">
+              <div class="card">
+                <div class="header">
+                  <h4 class="title">Temperature</h4>
+                  <p class="category">Temperature inside the Fan in &deg;C</p>
+                </div>
+                <div class="content">
+                  <canvas id="temperatureChart" width="90" height="90"></canvas>
+                  <div class="footer">
+                    <hr>
+                    <div class="stats">
+                      <i class="fa fa-history"></i> Updated 1 second ago
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class = "col-md-4" id = "temperatureCanvas">
-          <canvas id="temperatureChart"  width="500" height="500" style = "z-index: 1;"></canvas>
-        </div>
-        <div class = "col-md-4" id = "powerCanvas">
-          <canvas id="powerChart" width="500" height="500" style = "z-index: 1;"></canvas>
-        </div>
-        </div>
+      </div>
+  </div>
   </body>
+
+
+  <!--  Checkbox, Radio & Switch Plugins -->
+  <script src="assets/js/bootstrap-checkbox-radio-switch.js"></script>
+
+  <!--  Charts Plugin -->
+  <script src="assets/js/chartist.min.js"></script>
+
+  <!--  Notifications Plugin    -->
+  <script src="assets/js/bootstrap-notify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js" integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB" crossorigin="anonymous"></script>
 </html>

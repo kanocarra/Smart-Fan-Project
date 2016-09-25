@@ -1,6 +1,8 @@
 /**
  * Created by kanocarra on 14/08/16.
  */
+var statusRef;
+
 (function() {
 
     // Initialize Firebase
@@ -15,17 +17,23 @@
             const database = firebase.database().ref();
 
             //Create reference to Smart-Fan status
-            const statusRef = database.child('status');
+            statusRef = database.child('status');
             const dataRef = database.child('data');
 
-            //drawGraph(dataRef.val());
+            //$('#updateSpeed').click(function(e) {
+            //    e.preventDefault();
+            //    console.log($('#exampleSpeed').val());
+            //    statusRef.update({
+            //        "speed": $('#exampleSpeed').val()
+            //    });
+            //});
 
-            //Syn status changes (eventType, callback)
-            //statusRef.on('value', snap =>
-            //    console.log(snap.val())
-            //);
             //Sync Data Changes
             dataRef.on('value', snap => drawGraphs(snap.val()));
+
+            statusRef.on('value', snap => updateStats(snap.val()));
+
+
 }());
 
 function drawGraphs(data) {
@@ -73,12 +81,12 @@ function drawSpeedGraph(speedValues, dateTime){
                     }
                 }]
             },
-            title: {
-                display: true,
-                position: top,
-                fontSize: 12,
-                text: 'Speed (RPM)'
-            },
+            //title: {
+            //    display: true,
+            //    position: top,
+            //    fontSize: 12,
+            //    text: 'Speed (RPM)'
+            //},
             legend: {
                 display: false
             }
@@ -107,12 +115,12 @@ function drawPowerGraph(powerValues,dateTime){
                     }
                 }]
             },
-            title: {
-                display: true,
-                position: top,
-                fontSize: 12,
-                text: 'Power Usage (W)'
-            },
+            //title: {
+            //    display: true,
+            //    position: top,
+            //    fontSize: 12,
+            //    text: 'Power Usage (W)'
+            //},
             legend: {
                 display: false
             }
@@ -143,12 +151,12 @@ function drawTemperatureGraph(tempValues,dateTime){
                     }
                 }]
             },
-            title: {
-                display: true,
-                position: top,
-                fontSize: 12,
-                text: 'Temperature of Fan (Celcius)'
-            },
+            //title: {
+            //    display: true,
+            //    position: top,
+            //    fontSize: 12,
+            //    text: 'Temperature of Fan (Celcius)'
+            //},
             legend: {
                 display: false
             }
@@ -157,3 +165,89 @@ function drawTemperatureGraph(tempValues,dateTime){
 
 }
 
+function updateStats(statusData){
+
+    var status;
+
+    if(statusData['state'] == 'O'){
+        status = 'ON';
+        $('#fan-status').css({
+            'background-color' : 'green',
+            'text-align' : 'center'
+        });
+    } else if(statusData['state'] == 'X'){
+        status = 'OFF';
+        $('#fan-status').css({
+            'background-color' : 'grey',
+            'text-align' : 'center'
+        });
+    } else if (statusData['state'] == 'L') {
+        status = 'LOCKED';
+        $('#fan-status').css({
+            'background-color' : 'red',
+            'text-align' : 'center'
+        });
+    } else if (statusData['state'] == 'B'){
+        status = 'BLOCKED';
+        $('#fan-status').css({
+            'background-color' : '#ffbb01',
+            'text-align' : 'center'
+        });
+    }
+
+    $('#fan-status').html('<h2 style= "color: white" class="card-text">' + status + '</h2>');
+
+    if(status == 'ON'){
+        $('#fanState').text("Stop Fan");
+    } else {
+        $('#fanState').text("Start Fan");
+    }
+
+    $('#current-speed').html('<h2 style= "color: white" class="card-text">' + statusData['speed'] + ' RPM</h2>');
+
+    $('#power-usage').html('<h2 style= "color: white" class="card-text">' + statusData['power'] + ' W</h2>')
+
+    $('#fan-details').html( '<p><bold>Device Type:</bold> '+ statusData['deviceParam'] + ' ' + statusData['deviceType'] + '</p>' +
+                            '<p><bold>Device ID:</bold> ' + statusData['deviceId'] + '</p>' +
+                            '<p><bold>Software Version:</bold> ' + statusData['softwareVersion'] +  '</p>');
+}
+
+
+$( document ).ready( function() {
+    $("#updateSpeed").on("click", function (e) {
+        e.preventDefault();
+        var newSpeed = $('#exampleSpeed').val();
+        if(newSpeed != ""){
+        statusRef.update({
+            "speed": $('#exampleSpeed').val()
+        });
+        }
+
+    });
+
+    $('#fanState').on('click', function(){
+        var currentState = $('#fanState').text();
+        if(currentState.indexOf("Start") != -1){
+            statusRef.update({
+                "state": "O"
+            });
+        } else {
+            statusRef.update({
+                "state": "X"
+            });
+        }
+    });
+
+    $('#calibrateFan').on('click', function() {
+        statusRef.update({
+            "calibrateFan": "1"
+        });
+    });
+
+    $('#requestStatus').on('click', function() {
+        statusRef.update({
+            "statusRequested": "1"
+        });
+    });
+
+});
