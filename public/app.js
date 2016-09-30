@@ -2,6 +2,16 @@
  * Created by kanocarra on 14/08/16.
  */
 var statusRef;
+var speedGraph;
+var powerGraph;
+var temperatureGraph;
+var graphDrawn;
+var dataRef;
+var timer;
+var speedValues = [];
+var powerValues = [];
+var tempValues = [];
+var dateTime = [];
 
 (function() {
 
@@ -18,51 +28,118 @@ var statusRef;
 
             //Create reference to Smart-Fan status
             statusRef = database.child('status');
-            const dataRef = database.child('data');
+            dataRef = database.child('data');
+            graphDrawn = false;
+            dataCount = 0;
 
-            //$('#updateSpeed').click(function(e) {
-            //    e.preventDefault();
-            //    console.log($('#exampleSpeed').val());
-            //    statusRef.update({
-            //        "speed": $('#exampleSpeed').val()
-            //    });
-            //});
+            dataRef.limitToLast(20).on('child_added', function(snap) {
+                if(graphDrawn){
+                    updateGraphs(snap.val());
+                } else {
+                    drawGraphs(snap.val());
+                }
 
-            //Sync Data Changes
-            dataRef.on('value', snap => drawGraphs(snap.val()));
+            });
 
             statusRef.on('value', snap => updateStats(snap.val()));
 
 
 }());
 
+function requestStatus() {
+    console.log("timeout");
+    statusRef.update({
+        "statusRequested": "1"
+    });
+}
+
 function drawGraphs(data) {
 
+    if(dataCount < 19){
+        speedValues.push(data['speed']);
+        tempValues.push(data['temperature']);
+        powerValues.push(data['power']);
 
-    var speedValues = [];
-    var powerValues = [];
-    var tempValues = [];
-    var dateTime = [];
-
-    for (var value in data) {
-        speedValues.push(data[value]['speed']);
-        powerValues.push(data[value]['power']);
-        tempValues.push(data[value]['temperature']);
-        var date = new Date(parseInt(value));
+        var date = new Date(parseInt(data['timestamp']));
         var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         dateTime.push(time);
+
+        dataCount++;
+    } else {
+        speedValues.push(data['speed']);
+        tempValues.push(data['temperature']);
+        powerValues.push(data['power']);
+
+        var date = new Date(parseInt(data['timestamp']));
+        var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        dateTime.push(time);
+
+        drawSpeedGraph(speedValues, dateTime);
+        drawPowerGraph(powerValues, dateTime);
+        drawTemperatureGraph(tempValues, dateTime);
+        graphDrawn = true;
+
     }
 
-    drawSpeedGraph(speedValues, dateTime);
-    drawPowerGraph(powerValues, dateTime);
-    drawTemperatureGraph(tempValues, dateTime);
+    //for (var value in data) {
+    //    speedValues.push(data[value]['speed']);
+    //    powerValues.push(data[value]['power']);
+    //    tempValues.push(data[value]['temperature']);
+    //    var date = new Date(parseInt(value));
+    //    var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    //    dateTime.push(time);
+    //}
+
+
+
+}
+
+function updateGraphs(data) {
+    var speed = data['speed'];
+    var power = data['power'];
+    var temperature = data['temperature'];
+    var timestamp = data['timestamp'];
+    var date = new Date(parseInt(timestamp));
+    var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    console.log(data);
+
+    // Update speed chart
+    speedGraph.data.datasets[0].data.shift();
+    speedGraph.data.labels.shift();
+
+    speedGraph.data.datasets[0].data.push(speed);
+    speedGraph.data.labels.push(time);
+
+    speedGraph.update();
+
+
+    // Update power chart
+    powerGraph.data.datasets[0].data.shift();
+    powerGraph.data.labels.shift();
+
+    powerGraph.data.datasets[0].data.push(power);
+    powerGraph.data.labels.push(time);
+
+    powerGraph.update();
+
+    // Update temperature chart
+    temperatureGraph.data.datasets[0].data.shift();
+    temperatureGraph.data.labels.shift();
+
+    temperatureGraph.data.datasets[0].data.push(temperature);
+    temperatureGraph.data.labels.push(time);
+
+    temperatureGraph.update();
+
+
 }
 
 
 function drawSpeedGraph(speedValues, dateTime){
 
     var ctx = document.getElementById("speedChart");
-    var myChart = new Chart(ctx, {
+    speedGraph = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dateTime,
@@ -81,12 +158,6 @@ function drawSpeedGraph(speedValues, dateTime){
                     }
                 }]
             },
-            //title: {
-            //    display: true,
-            //    position: top,
-            //    fontSize: 12,
-            //    text: 'Speed (RPM)'
-            //},
             legend: {
                 display: false
             },
@@ -107,7 +178,7 @@ function drawSpeedGraph(speedValues, dateTime){
 
 function drawPowerGraph(powerValues,dateTime){
     var ctx = document.getElementById("powerChart");
-    var myChart = new Chart(ctx, {
+    powerGraph = new Chart(ctx, {
         type: 'line',
         multiTooltipTemplate: '<%%= value %>',
         data: {
@@ -128,12 +199,6 @@ function drawPowerGraph(powerValues,dateTime){
                     }
                 }]
             },
-            //title: {
-            //    display: true,
-            //    position: top,
-            //    fontSize: 12,
-            //    text: 'Power Usage (W)'
-            //},
             legend: {
                 display: false
             },
@@ -154,7 +219,7 @@ function drawPowerGraph(powerValues,dateTime){
 function drawTemperatureGraph(tempValues,dateTime){
 
     var ctx = document.getElementById("temperatureChart");
-    var myChart = new Chart(ctx, {
+    temperatureGraph = new Chart(ctx, {
         type: 'line',
         data: {
             labels: dateTime,
@@ -193,6 +258,7 @@ function drawTemperatureGraph(tempValues,dateTime){
             }
         }
     });
+    graphDrawn = true;
 
 }
 
@@ -234,7 +300,7 @@ function updateStats(statusData){
         $('#fanState').text("Start Fan");
     }
 
-    $('#current-speed').html('<h2 style= "color: white" class="card-text">' + statusData['speed'] + ' RPM</h2>');
+    $('#current-speed').html('<h2 style= "color: white" class="card-text">' + statusData['currentSpeed'] + ' RPM</h2>');
 
     $('#power-usage').html('<h2 style= "color: white" class="card-text">' + statusData['power'] + ' W</h2>')
 
@@ -245,12 +311,20 @@ function updateStats(statusData){
 
 
 $( document ).ready( function() {
+
     $("#updateSpeed").on("click", function (e) {
         e.preventDefault();
+        $('#updateSpeed').text('');
         var newSpeed = $('#exampleSpeed').val();
         if(newSpeed != ""){
+            if(parseInt(newSpeed) <= 0){
+                statusRef.update({
+                    "requestedSpeed": "0",
+                    "state": "X"
+                });
+            }
         statusRef.update({
-            "speed": $('#exampleSpeed').val()
+            "requestedSpeed": $('#exampleSpeed').val()
         });
         }
 
@@ -259,12 +333,15 @@ $( document ).ready( function() {
     $('#fanState').on('click', function(){
         var currentState = $('#fanState').text();
         if(currentState.indexOf("Start") != -1){
+            timer = setInterval(requestStatus, 1000);
             statusRef.update({
                 "state": "O"
             });
         } else {
+            clearInterval(timer);
             statusRef.update({
-                "state": "X"
+                "state": "X",
+                "requestedSpeed": "0"
             });
         }
     });
