@@ -12,6 +12,8 @@ var speedValues = [];
 var powerValues = [];
 var tempValues = [];
 var dateTime = [];
+var timerOn;
+var blockedTimer;
 
 (function() {
 
@@ -41,13 +43,18 @@ var dateTime = [];
 
             });
 
-            statusRef.on('value', snap => updateStats(snap.val()));
+            statusRef.on('value', function(snap) {
+                updateStats(snap.val())
+                });
+
+            $('#newSpeedModal').hide();
+            timerOn = false;
 
 
 }());
 
 function requestStatus() {
-    console.log("timeout");
+    console.log('timeout');
     statusRef.update({
         "statusRequested": "1"
     });
@@ -80,18 +87,6 @@ function drawGraphs(data) {
         graphDrawn = true;
 
     }
-
-    //for (var value in data) {
-    //    speedValues.push(data[value]['speed']);
-    //    powerValues.push(data[value]['power']);
-    //    tempValues.push(data[value]['temperature']);
-    //    var date = new Date(parseInt(value));
-    //    var time =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    //    dateTime.push(time);
-    //}
-
-
-
 }
 
 function updateGraphs(data) {
@@ -238,12 +233,6 @@ function drawTemperatureGraph(tempValues,dateTime){
                     }
                 }]
             },
-            //title: {
-            //    display: true,
-            //    position: top,
-            //    fontSize: 12,
-            //    text: 'Temperature of Fan (Celcius)'
-            //},
             legend: {
                 display: false
             },
@@ -278,18 +267,33 @@ function updateStats(statusData){
             'background-color' : 'grey',
             'text-align' : 'center'
         });
+        clearInterval(timer);
+        $('#graphData').text('Auto Status');
+        timerOn = false;
     } else if (statusData['state'] == 'L') {
         status = 'LOCKED';
         $('#fan-status').css({
             'background-color' : 'red',
             'text-align' : 'center'
         });
+        clearInterval(timer);
+        $('#graphData').text('Auto Status');
+        timerOn = false;
+        $('#exampleSpeed').prop('disabled', true);
+        $('#updateSpeed').text('Reset Fan');
+
     } else if (statusData['state'] == 'B'){
         status = 'BLOCKED';
         $('#fan-status').css({
             'background-color' : '#ffbb01',
             'text-align' : 'center'
         });
+        setTimeout(blockedTimer, 900);
+
+        clearInterval(timer);
+        $('#graphData').text('Auto Status');
+        timerOn = false;
+
     }
 
     $('#fan-status').html('<h2 style= "color: white" class="card-text">' + status + '</h2>');
@@ -309,33 +313,65 @@ function updateStats(statusData){
                             '<p><bold>Software Version:</bold> ' + statusData['softwareVersion'] +  '</p>');
 }
 
+function clearModal() {
+    $('#newSpeedModal').css('display', 'none');
+}
+
+
 
 $( document ).ready( function() {
 
     $("#updateSpeed").on("click", function (e) {
         e.preventDefault();
-        $('#updateSpeed').text('');
-        var newSpeed = $('#exampleSpeed').val();
-        if(newSpeed != ""){
-            if(parseInt(newSpeed) <= 0){
+        if($('#updateSpeed').text() == 'Reset Fan'){
+            statusRef.update({
+                "state": "O",
+                "requestedSpeed": "100"
+            });
+            $('#updateSpeed').text('Update Speed');
+            $('#exampleSpeed').prop('disabled', false);
+        } else {
+            $('#newSpeedModal').removeClass('alert-success');
+            $('#newSpeedModal').removeClass('alert-danger');
+            var newSpeed = $('#exampleSpeed').val();
+            if (parseInt(newSpeed) < 0 || parseInt(newSpeed) > 2700 || !(/^\d+$/.test(newSpeed))) {
+                $('#newSpeedModal').addClass('alert-danger');
+                $('#newSpeedModal').html('<strong>Invalid Input.</strong> Please enter a number in the range of <strong>300-2700 RPM</strong>');
+            } else {
+                $('#newSpeedModal').addClass('alert-success');
+                $('#newSpeedModal').text('A new speed of ' + newSpeed + ' RPM has been requested.');
+                $('#newSpeedModal').show();
                 statusRef.update({
-                    "requestedSpeed": "0",
-                    "state": "X"
+                    "requestedSpeed": $('#exampleSpeed').val()
                 });
+                setTimeout(clearModal, 3000);
             }
-        statusRef.update({
-            "requestedSpeed": $('#exampleSpeed').val()
-        });
         }
+
+        });
+
+
+
+    $('#graphData').on('click', function (){
+        if(timerOn) {
+            clearInterval(timer);
+            $('#graphData').text('Auto Status');
+            timerOn = false;
+        } else {
+            timer = setInterval(requestStatus, 2000);
+            $('#graphData').text('Stop Status');
+            timerOn = true;
+        }
+
 
     });
 
     $('#fanState').on('click', function(){
         var currentState = $('#fanState').text();
         if(currentState.indexOf("Start") != -1){
-            timer = setInterval(requestStatus, 1000);
             statusRef.update({
-                "state": "O"
+                "state": "O",
+                "requestedSpeed": "600"
             });
         } else {
             clearInterval(timer);
@@ -344,12 +380,6 @@ $( document ).ready( function() {
                 "requestedSpeed": "0"
             });
         }
-    });
-
-    $('#calibrateFan').on('click', function() {
-        statusRef.update({
-            "calibrateFan": "1"
-        });
     });
 
     $('#requestStatus').on('click', function() {

@@ -55,12 +55,49 @@
       .btn.btn-speed {
         background-color: #00acac;
         color: #fff;
+        width: 30%;
+      }
+
+      .btn.btn-graph {
+        background-color: #00acac;
+        color: #fff;
+
+      }
+
+      .btn.btn-graph:hover {
+        background-color: #029c9c;
+        color: #fff;
       }
 
       .btn.btn-speed:hover {
         background-color: #029c9c;
         color: #fff;
       }
+
+      .btn.btn-actions {
+        background-color: #2d353c;
+        border: none;
+        color: #fff;
+        font-size: 14px;
+        width: 24%;
+        height: 50px;
+      }
+
+      .btn.btn-actions:hover {
+        background-color: #2d353c;
+        color: #fff;
+      }
+
+      .btn.btn-actions:focus {
+        background-color: #2d353c;
+        color: #fff;
+      }
+
+
+      .form-control.speed-input {
+        width: 70%;
+      }
+
 
     </style>
     <!-- AngularJS -->
@@ -142,23 +179,26 @@
                <hr>
               <div id = "fan-details"></div>
               <hr>
+              <button type="button" class="btn btn-info btn-actions" id = "fanState">Start Fan</button>
+              <button type="button" class="btn btn-info btn-actions" id = "calibrateFan" >Calibrate</button>
+              <button type="button" class="btn btn-info btn-actions" id = "requestStatus">Request Status</button>
+              <button type="button" class="btn btn-info btn-actions " id="graphData">Auto Status</button>
+              <br>
+              <br>
               <form class="form-inline">
                 <div class="form-group">
                   <label class="sr-only" for="exampleSpeed">Request New Speed</label>
                   <div class="input-group">
-                    <input type="text" class="form-control" id="exampleSpeed" placeholder="New Speed">
+                    <input type="text" class="form-control speed-input" id="exampleSpeed" placeholder="New Speed">
                     <div class="input-group-addon">RPM</div>
                   </div>
                 </div>
                 <button type="button" class="btn btn-speed" id = "updateSpeed">Update Speed</button>
               </form>
               <br>
-              <button type="button" class="btn btn-info" id = "fanState">Start Fan</button>
-              <button type="button" class="btn btn-info" id = "calibrateFan" >Calibrate</button>
-              <button type="button" class="btn btn-info" id = "requestStatus">Request Status</button>
-              <br>
+              <div class="alert" id="newSpeedModal" role="alert" style="display: none;"></div>
+              <p>Enter a new speed, request the fan's status or request auto status to receive status updates every second.</p>
             </div>
-
             <div class="col-md-8">
               <div class="card">
                 <div class="header">
@@ -181,6 +221,18 @@
 
           <div class="row">
             <div class = "col-md-4">
+              <hr>
+              <h2>How It Works</h2>
+              <p>Welcome to Fan Base, an interactive real-time dashboard for all your smart fan needs.</p>
+              <p>This dashboard has been built to showcase how a real-time database can be used to monitor and control the status of a fan inside a Fisher & Paykel B-Model Fridge.</p>
+              <p>Combined with a node.js server and an Atmel ATTiny 841, Firebase allows us to log data and display it in real-time.</p>
+              <p><em>Brought to you as part of the ELECTENG 311 Project</em></p>
+             <br>
+              <h4>Team 10</h4>
+              <p>Tyler Harrison</p>
+              <p>Ronish Lal</p>
+              <p>Murali Magesan</p>
+              <p>Emily Melhuish</p>
             </div>
             <div class="col-md-4">
               <div class="card">
