@@ -13,7 +13,6 @@ var powerValues = [];
 var tempValues = [];
 var dateTime = [];
 var timerOn;
-var blockedTimer;
 
 (function() {
 
@@ -288,7 +287,7 @@ function updateStats(statusData){
             'background-color' : '#ffbb01',
             'text-align' : 'center'
         });
-        setTimeout(blockedTimer, 900);
+        setTimeout(blockedTimeOut, 900);
 
         clearInterval(timer);
         $('#graphData').text('Auto Status');
@@ -298,7 +297,7 @@ function updateStats(statusData){
 
     $('#fan-status').html('<h2 style= "color: white" class="card-text">' + status + '</h2>');
 
-    if(status == 'ON'){
+    if(status == 'ON' || status == "BLOCKED"){
         $('#fanState').text("Stop Fan");
     } else {
         $('#fanState').text("Start Fan");
@@ -315,6 +314,13 @@ function updateStats(statusData){
 
 function clearModal() {
     $('#newSpeedModal').css('display', 'none');
+}
+
+function blockedTimeOut() {
+    statusRef.update({
+        "state": "O"
+    });
+
 }
 
 
@@ -371,7 +377,7 @@ $( document ).ready( function() {
         if(currentState.indexOf("Start") != -1){
             statusRef.update({
                 "state": "O",
-                "requestedSpeed": "600"
+                "requestedSpeed": "1000"
             });
         } else {
             clearInterval(timer);
