@@ -55,7 +55,6 @@
       .btn.btn-speed {
         background-color: #00acac;
         color: #fff;
-        width: 30%;
       }
 
       .btn.btn-graph {
@@ -75,7 +74,6 @@
         border: none;
         color: #fff;
         font-size: 14px;
-        width: 30%;
         height: 50px;
       }
 
@@ -91,8 +89,9 @@
 
 
       .form-control.speed-input {
-        width: 70%;
+        width: 50%;
       }
+
 
 
     </style>
@@ -114,7 +113,23 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
 
-
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 
     <!--     Fonts and icons     -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -169,14 +184,16 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-4" style = "margin-top: 20px">
-              <h3>Smart Fan <sup>TM</sup></h3>
-              <h4>Fisher & Paykel Appliances</h4>
-               <hr>
-              <div id = "fan-details"></div>
-              <hr>
+            <div class="col-md-4">
+              <div class="card card-block">
+                <h3 class="card-title"> <h3>Smart Fan <sup>TM</sup></h3></h3>
+                <h4>Fisher & Paykel Appliances</h4>
+                <p class="card-text">
+                <div id = "fan-details"></div>
+                </p>
+              </div>
               <button type="button" class="btn btn-info btn-actions" id = "fanState">Start Fan</button>
-              <button type="button" class="btn btn-info btn-actions" id = "requestStatus">Request Status</button>
+              <button type="button" class="btn btn-info btn-actions" id = "requestStatus">Status</button>
               <button type="button" class="btn btn-info btn-actions " id="graphData">Auto Status</button>
               <br>
               <br>
@@ -192,7 +209,7 @@
               </form>
               <br>
               <div class="alert" id="newSpeedModal" role="alert" style="display: none;"></div>
-              <p>Enter a new speed, request the fan's status or request auto status to receive status updates every second.</p>
+
             </div>
             <div class="col-md-8">
               <div class="card">
@@ -206,7 +223,7 @@
                   <div class="footer">
                     <hr>
                     <div class="stats">
-                      <i class="fa fa-clock-o"></i> Updated 1 second ago
+                      <i class="fa fa-clock-o"></i> Updated 2 seconds ago
                     </div>
                   </div>
                 </div>
@@ -216,18 +233,23 @@
 
           <div class="row">
             <div class = "col-md-4">
-              <hr>
-              <h2>How It Works</h2>
-              <p>Welcome to Fan Base, an interactive real-time dashboard for all your smart fan needs.</p>
-              <p>This dashboard has been built to showcase how a real-time database can be used to monitor and control the status of a fan inside a Fisher & Paykel B-Model Fridge.</p>
-              <p>Combined with a node.js server and an Atmel ATTiny 841, Firebase allows us to log data and display it in real-time.</p>
-              <p><em>Brought to you as part of the ELECTENG 311 Project</em></p>
-             <br>
-              <h4>Team 10</h4>
-              <p>Tyler Harrison</p>
-              <p>Ronish Lal</p>
-              <p>Murali Magesan</p>
-              <p>Emily Melhuish</p>
+              <div class="card">
+                <div class="card-header">
+                  How It Works
+                </div>
+                <div class="card-block">
+                  <p class="card-text">Welcome to Fan Base, an interactive real-time dashboard for all your smart fan needs.</p>
+                  <p>This dashboard has been built to showcase how a real-time database can be used to monitor and control the status of a fan inside a Fisher & Paykel B-Model Fridge.</p>
+                  <p>Combined with a node.js server and an Atmel ATTiny 841, Firebase allows us to log data and display it in real-time.</p>
+                  <p><em>Brought to you as part of the ELECTENG 311 Project</em></p></p>
+                  <br>
+                  <h4>Team 10</h4>
+                  <p>Tyler Harrison</p>
+                  <p>Ronish Lal</p>
+                  <p>Murali Magesan</p>
+                  <p>Emily Melhuish</p>
+                </div>
+              </div>
             </div>
             <div class="col-md-4">
               <div class="card">
@@ -237,7 +259,7 @@
                 </div>
                 <div class="content">
                   <div id="chartHours"></div>
-                  <canvas id="powerChart" width="90" height="90"></canvas>
+                  <canvas id="powerChart" width="80" height="70"></canvas>
                   <div class="footer">
                     <hr>
                     <div class="stats">
@@ -254,7 +276,7 @@
                   <p class="category">Temperature inside the Fan in &deg;C</p>
                 </div>
                 <div class="content">
-                  <canvas id="temperatureChart" width="90" height="90"></canvas>
+                  <canvas id="temperatureChart" width="80" height="70"></canvas>
                   <div class="footer">
                     <hr>
                     <div class="stats">

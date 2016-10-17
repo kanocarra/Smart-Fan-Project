@@ -331,7 +331,7 @@ $( document ).ready( function() {
         e.preventDefault();
         if($('#updateSpeed').text() == 'Reset Fan'){
             statusRef.update({
-                "state": "O",
+                "state": "X",
                 "requestedSpeed": "100"
             });
             $('#updateSpeed').text('Update Speed');
@@ -343,6 +343,7 @@ $( document ).ready( function() {
             if (parseInt(newSpeed) < 0 || parseInt(newSpeed) > 2700 || !(/^\d+$/.test(newSpeed))) {
                 $('#newSpeedModal').addClass('alert-danger');
                 $('#newSpeedModal').html('<strong>Invalid Input.</strong> Please enter a number in the range of <strong>300-2700 RPM</strong>');
+                $('#newSpeedModal').show();
             } else {
                 $('#newSpeedModal').addClass('alert-success');
                 $('#newSpeedModal').text('A new speed of ' + newSpeed + ' RPM has been requested.');
@@ -350,26 +351,26 @@ $( document ).ready( function() {
                 statusRef.update({
                     "requestedSpeed": $('#exampleSpeed').val()
                 });
-                setTimeout(clearModal, 3000);
             }
+            setTimeout(clearModal, 3000);
         }
 
         });
 
-
-
     $('#graphData').on('click', function (){
         if(timerOn) {
+            statusRef.update({
+                "statusRequested": "0"
+            });
             clearInterval(timer);
             $('#graphData').text('Auto Status');
+
             timerOn = false;
         } else {
             timer = setInterval(requestStatus, 2000);
             $('#graphData').text('Stop Status');
             timerOn = true;
         }
-
-
     });
 
     $('#fanState').on('click', function(){
